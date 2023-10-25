@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
+require('dotenv').config({ path: '.env.local' });
 
 app.use(express.json())
 app.use(cors())
@@ -112,7 +113,7 @@ app.post('/api/phonebook', (request, response) => {
   response.json(person);
 })
 
-const PORT = process.envPORT || 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

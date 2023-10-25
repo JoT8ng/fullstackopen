@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 
-const baseURL = '/api/persons'
+const baseURL = '/api/phonebook'
 
 const getAll = ({ setPersons }) => {
   return axios
@@ -26,7 +26,7 @@ const add = ({ setPersons, persons, setNewName, setNewNumber, personObject }) =>
 }
 
 const remove = (id) => {
-    const request = axios.delete(`${baseURL}/${id}`)
+    const request = axios.delete(`${baseURL}/:${id}`)
     return request.then(response => {
       console.log('remove person from backend');
     })
@@ -36,7 +36,7 @@ const remove = (id) => {
 }
 
 const update = ({ id, personObject }) => {
-    const request = axios.put(`${baseURL}/${id}`, personObject)
+    const request = axios.put(`${baseURL}/:${id}`, personObject)
     return request.then(response => {
       console.log('Updated phone number');
     })
