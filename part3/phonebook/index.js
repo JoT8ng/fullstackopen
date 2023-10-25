@@ -6,6 +6,7 @@ require('dotenv').config({ path: '.env.local' });
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static('dist'))
 
 app.use(morgan((tokens, req, res) => {
   return [
