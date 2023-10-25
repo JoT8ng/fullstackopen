@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Display from './components/display'
 import Form from './components/form'
 import Filter from './components/filter'
@@ -16,12 +15,13 @@ const App = () => {
 
   useEffect (() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('received phonebook from backend')
-        setPersons(response.data)
+    phonebookService.getAll({ setPersons })
+      .then(() => {
+        console.log('received phonebook from backend');
       })
+      .catch(error => {
+        console.error('Error getting phonebook from backend:', error);
+      });
   }, [])
 
   const handleNameSubmit = (event) => {
