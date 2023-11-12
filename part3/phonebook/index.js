@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
-require('dotenv').config();
+require('dotenv').config()
 const Person = require('./models/model')
 
 app.use(express.json())
@@ -29,12 +29,12 @@ app.get('/api/phonebook', (request, response, next) => {
   Person.find({}).then(persons => {
     response.json(persons)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.get('/info', (request, response, next) => {
-  const currentDate = new Date().toLocaleString();
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const currentDate = new Date().toLocaleString()
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   Person.find({}).then(persons => {
     response.send(
       `<div>
@@ -45,31 +45,31 @@ app.get('/info', (request, response, next) => {
       </div>`
     )
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.get('/api/phonebook/:id', (request, response, next) => {
   Person.findById(request.params.id)
-  .then(person => {
-    if (person) {
-      response.json(person);
-    } else {
-      response.status(404).end();
-    }
-  })
-  .catch(error => next(error))
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/phonebook/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-  .then(() => {
-    response.status(204).end();
-  })
-  .catch(error => next(error))
+    .then(() => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/phonebook', (request, response, next) => {
-  const body = request.body;
+  const body = request.body
 
   if (!body.name || !body.number) {
     return response.status(400).json({
@@ -84,7 +84,7 @@ app.post('/api/phonebook', (request, response, next) => {
 
   person.save().then(savedPerson => savedPerson.toJSON())
 
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.put('/api/phonebook/:id', (request, response, next) => {
@@ -95,11 +95,11 @@ app.put('/api/phonebook/:id', (request, response, next) => {
     number: body.number
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, {new: true})
-  .then(updatedPerson => {
-    response.json(updatedPerson)
-  })
-  .catch(error => next(error))
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
