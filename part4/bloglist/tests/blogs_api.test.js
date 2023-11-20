@@ -11,6 +11,12 @@ const Blog = require('../models/models')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
+    await User.deleteMany({})
+  
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', name:'root', passwordHash })
+
+    await user.save()
 
     const blogObject = helper.initialBlogs
         .map(blog => new Blog(blog))
@@ -40,6 +46,21 @@ describe(('blogs are received'), () => {
 })
 
 describe(('blogs are added'), () => {
+    let headers
+
+    beforeEach(async () => {
+      const newUser = {
+        username: 'test',
+        password: 'password'
+      }
+
+      const result = await api
+        .post('/api/login')
+        .send(newUser)
+
+      headers = result.body.token
+    })
+    
     test('a valid blog can be added', async () => {
         const newBlog = {
             title: 'Test blog',
@@ -50,6 +71,7 @@ describe(('blogs are added'), () => {
       
         await api
           .post('/api/blogs')
+          .set('Authorization', 'bearer ' + headers)
           .send(newBlog)
           .expect(201)
           .expect('Content-Type', /application\/json/)
@@ -70,6 +92,7 @@ describe(('blogs are added'), () => {
       
         await api
           .post('/api/blogs')
+          .set('Authorization', 'bearer ' + headers)
           .send(newBlog)
           .expect(400)
       
@@ -87,6 +110,7 @@ describe(('blogs are added'), () => {
 
         await api
           .post('/api/blogs')
+          .set('Authorization', 'bearer ' + headers)
           .send(newBlog)
           .expect(201)
       
@@ -100,12 +124,29 @@ describe(('blogs are added'), () => {
 })
 
 describe(('blogs are deleted'), () => {
+    let headers
+
+    beforeEach(async () => {
+      const newUser = {
+        username: 'test',
+        name: 'test',
+        password: 'password'
+      }
+
+      const result = await api
+        .post('/api/login')
+        .send(newUser)
+
+      headers = result.body.token
+    })
+  
     test('blogs are deleted successfully', async () => {
         const blogsAtStart = await helper.blogsInDb()
         const blogToDelete = blogsAtStart[0]
 
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', 'bearer ' + headers)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -146,15 +187,6 @@ describe(('blogs are updated'), () => {
 })
 
 describe('when there is initially one user in db', () => {
-    beforeEach(async () => {
-      await User.deleteMany({})
-  
-      const passwordHash = await bcrypt.hash('sekret', 10)
-      const user = new User({ username: 'root', passwordHash })
-  
-      await user.save()
-    })
-  
     test('creation succeeds with a fresh username', async () => {
       const usersAtStart = await helper.usersInDb()
   
