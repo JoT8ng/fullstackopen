@@ -46,21 +46,22 @@ describe(('blogs are received'), () => {
 })
 
 describe(('blogs are added'), () => {
-    let headers
+    let headers = null
 
-    beforeEach(async () => {
-      const newUser = {
-        username: 'test',
-        password: 'password'
-      }
-
-      const result = await api
+    beforeEach (async () => {
+      await api
         .post('/api/login')
-        .send(newUser)
+        .send ({
+        "username": "root",
+        "password": "sekret"
+        })
+        .then ((res) => {
+          return (headers = res.body.token)
+        })
 
-      headers = result.body.token
+      return headers
     })
-    
+
     test('a valid blog can be added', async () => {
         const newBlog = {
             title: 'Test blog',
@@ -71,7 +72,7 @@ describe(('blogs are added'), () => {
       
         await api
           .post('/api/blogs')
-          .set('Authorization', 'bearer ' + headers)
+          .set('Authorization', `Bearer ${headers}`)
           .send(newBlog)
           .expect(201)
           .expect('Content-Type', /application\/json/)
@@ -92,7 +93,7 @@ describe(('blogs are added'), () => {
       
         await api
           .post('/api/blogs')
-          .set('Authorization', 'bearer ' + headers)
+          .set('Authorization', `Bearer ${headers}`)
           .send(newBlog)
           .expect(400)
       
@@ -110,7 +111,7 @@ describe(('blogs are added'), () => {
 
         await api
           .post('/api/blogs')
-          .set('Authorization', 'bearer ' + headers)
+          .set('Authorization', `Bearer ${headers}`)
           .send(newBlog)
           .expect(201)
       
@@ -124,38 +125,54 @@ describe(('blogs are added'), () => {
 })
 
 describe(('blogs are deleted'), () => {
-    let headers
+    let headers = null
 
-    beforeEach(async () => {
-      const newUser = {
-        username: 'test',
-        name: 'test',
-        password: 'password'
-      }
-
-      const result = await api
+    beforeEach (async () => {
+      await api
         .post('/api/login')
-        .send(newUser)
+        .send ({
+        "username": "root",
+        "password": "sekret"
+        })
+        .then ((res) => {
+          return (headers = res.body.token)
+        })
 
-      headers = result.body.token
+      return headers
     })
-  
+
     test('blogs are deleted successfully', async () => {
         const blogsAtStart = await helper.blogsInDb()
-        const blogToDelete = blogsAtStart[0]
+
+        const newBlog = {
+          title: 'Test delete blog',
+          author: 'Jo',
+          url: 'https://testblog.com/',
+          likes: 4,
+        }
+    
+        await api
+          .post('/api/blogs')
+          .set('Authorization', `Bearer ${headers}`)
+          .send(newBlog)
+          .expect(201)
+          .expect('Content-Type', /application\/json/)
+
+        const allBlogs = await helper.blogsInDb()
+        const blogToDelete = allBlogs.find(blog => blog.title === newBlog.title)
 
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
-            .set('Authorization', 'bearer ' + headers)
+            .set('Authorization', `Bearer ${headers}`)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()
 
-        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
 
         const contents = blogsAtEnd.map(r => r.title)
 
-        expect(contents).not.toContain(blogToDelete.title)
+        expect(contents).not.toContain(newBlog.title)
     })
 })
 
