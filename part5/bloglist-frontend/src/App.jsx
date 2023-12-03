@@ -68,10 +68,10 @@ const App = () => {
 
   const createBlog = async (blog) => {
     try {
-      await blogService
+      const returnedBlog = await blogService
         .create(blog)
       setBlogs(blogs.concat(returnedBlog))
-      setMessage('Blog added successfully!')
+      setErrorMessage('Blog added successfully!')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
