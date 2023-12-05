@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/notification'
+import Togglable from './components/togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -14,10 +15,12 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(false)
 
+  const blogFormRef = useRef()
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -39,7 +42,7 @@ const App = () => {
 
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
 
       blogService.setToken(user.token)
       setUser(user)
@@ -75,13 +78,62 @@ const App = () => {
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-      setMessage(true)
+      setMessage(false)
     } catch(exception) {
       setErrorMessage('Failed to add blog')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
+      setMessage(true)
+    }
+  }
+
+  const updateLikes = async (id) => {
+    const blog = blogs.find(blog => blog.id === id)
+    const updatedBlog = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      user: blog.user._id,
+      likes: blog.likes + 1
+    }
+
+    try {
+      const returnedBlog = await blogService
+        .update(id, updatedBlog)
+
+      setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+    } catch (exception) {
+      setErrorMessage('failed to update blog')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
       setMessage(false)
+      setBlogs(blogs.filter(n => n.id !== id))
+    }
+  }
+
+  const removeBlog = async (id) => {
+    try {
+      if (window.confirm('Would you like to delete this blog?')) {
+
+        const returnedBlog = await blogService
+          .remove(id)
+      }
+
+      setBlogs(blogs.filter(blog => blog.id !== id))
+
+      setErrorMessage('Blog deleted successfully!')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+      setMessage(false)
+    } catch (exception) {
+      setErrorMessage('failed to delete blog')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+      setMessage(true)
     }
   }
 
@@ -92,7 +144,7 @@ const App = () => {
       <Notification error={errorMessage} message={message} />
 
       {user === null ?
-        <LoginForm 
+        <LoginForm
           handleLogin={handleLogin}
           setUsername={setUsername}
           setPassword={setPassword}
@@ -105,14 +157,18 @@ const App = () => {
         </div>
       }
       {user !== null ?
-        <BlogForm createBlog={createBlog} /> :
+        <Togglable buttonLabel='Add new blog' ref={blogFormRef}>
+          <BlogForm createBlog={createBlog} />
+        </Togglable> :
         null
       }
 
       <div>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map(blog =>
+            <Blog key={blog.id} blog={blog} updateLikes={updateLikes} removeBlog={removeBlog} user={user} />
+          )}
       </div>
     </div>
   )
