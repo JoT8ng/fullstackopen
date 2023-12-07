@@ -24,14 +24,14 @@ const Blog = (props) => {
 
     <div style={blogStyle} className='blog'>
       <div>
-        <p className='blog-title-author'>
+        <p id='blog-title-author'>
           {blog.title} {blog.author}
           <button onClick={toggleVisibility}>{buttonLabel}</button>
         </p>
       </div>
       <div style={showVisible}>
-        <p className='blog-url'>{blog.url}</p>
-        <p className='blog-likes'>
+        <p id='blog-url'>{blog.url}</p>
+        <p id='blog-likes'>
           {blog.likes}
           <button onClick={() => updateLikes(blog.id)}>like</button>
         </p>
