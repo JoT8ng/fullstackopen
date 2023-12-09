@@ -18,7 +18,7 @@ const create = async newObject => {
   }
 
   const request = await axios.post(baseUrl, newObject, config)
-  return request.then(response => response.data)
+  return request.data
 }
 
 const update = (id, newObject) => {
@@ -32,7 +32,7 @@ const remove = async (id) => {
   }
 
   const request = await axios.delete(`${ baseUrl }/${id}`, config)
-  return request.then(response => response.data)
+  return request.data
 }
 
 export default { getAll, create, update, setToken, remove }

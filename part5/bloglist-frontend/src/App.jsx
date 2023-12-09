@@ -78,13 +78,14 @@ const App = () => {
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-      setMessage(false)
+      setMessage(true)
     } catch(exception) {
+      console.error('Exception:', exception)
       setErrorMessage('Failed to add blog')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-      setMessage(true)
+      setMessage(false)
     }
   }
 
@@ -117,23 +118,23 @@ const App = () => {
     try {
       if (window.confirm('Would you like to delete this blog?')) {
 
-        const returnedBlog = await blogService
+        await blogService
           .remove(id)
+
+        setBlogs(blogs.filter(blog => blog.id !== id))
+
+        setErrorMessage('Blog deleted successfully!')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+        setMessage(true)
       }
-
-      setBlogs(blogs.filter(blog => blog.id !== id))
-
-      setErrorMessage('Blog deleted successfully!')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-      setMessage(false)
     } catch (exception) {
       setErrorMessage('failed to delete blog')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-      setMessage(true)
+      setMessage(false)
     }
   }
 
