@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import { initial } from './reducers/anecdoteReducer'
 import AnecdoteList from './components/AnecdoteList'
 import AnecdoteForm from './components/AnecdoteForm'
+import Filter from './components/FilterAnecdotes'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -14,6 +15,7 @@ const App = () => {
   return (
     <div>
       <h2>Anecdotes</h2>
+      <Filter />
       <AnecdoteList />
       <h2>create new</h2>
       <AnecdoteForm />
