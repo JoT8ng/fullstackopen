@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useDispatch, useSelector } from 'react-redux'
-import { vote } from '../reducers/anecdoteReducer'
+import { voteAnecdotes } from '../reducers/anecdoteReducer'
 
 const AnecdoteList = () => {
     const filter = useSelector(state => state.filter)
@@ -14,7 +14,7 @@ const AnecdoteList = () => {
     }
 
     const handleVote = (id) => {
-      dispatch(vote({ id }))
+      dispatch(voteAnecdotes(id))
     }
 
     return (
