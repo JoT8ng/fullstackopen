@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useDispatch, useSelector } from 'react-redux'
 import { voteAnecdotes } from '../reducers/anecdoteReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
     const filter = useSelector(state => state.filter)
@@ -15,6 +16,7 @@ const AnecdoteList = () => {
 
     const handleVote = (id) => {
       dispatch(voteAnecdotes(id))
+      dispatch(setNotification('added vote to anecdote', 5000))
     }
 
     return (
