@@ -1,11 +1,20 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getAnecdotes, updateAnecdotes } from './requests'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
+import { useContext } from 'react'
+import NotificationContext from './notificationContext'
 
 const App = () => {
   const queryClient = useQueryClient()
+  const [, notificationDispatch] = useContext(NotificationContext)
+
+  const updateAnecdoteMutation = useMutation({
+    mutationFn: updateAnecdotes,
+    onSuccess: () => {
+      queryClient.invalidateQueries('anecdotes')
+    }
+  })
 
   const result = useQuery({
     queryKey: ['anecdotes'],
@@ -20,15 +29,13 @@ const App = () => {
 
   const anecdotes = result.data
 
-  const updateAnecdoteMutation = useMutation({
-    mutationFn: updateAnecdotes,
-    onSuccess: () => {
-      queryClient.invalidateQueries('anecdotes')
-    },
-  })
-
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes + 1 })
+    notificationDispatch({
+      type: 'SET_NOTIFICATION',
+      message: 'Voted successfully!',
+      timeout: 5000,
+    })
   }
 
   return (
