@@ -8,7 +8,7 @@ interface trainingValues {
     average: number;
 }
   
-interface inputValues {
+export interface inputValues {
     dailyHours: number[];
     target: number;
 }
@@ -17,7 +17,7 @@ const parseArguments = (args: string[]): inputValues => {
     if (args.length < 10) throw new Error('Not enough arguments');
     if (args.length > 10) throw new Error('Too many arguments');
   
-    const target = Number(args[2])
+    const target = Number(args[2]);
     const dailyHours = args.slice(3, 9).map(Number);
 
     if (!isNaN(target) && dailyHours.every(hour => !isNaN(hour))) {
@@ -28,12 +28,23 @@ const parseArguments = (args: string[]): inputValues => {
     } else {
         throw new Error('Provided values were not numbers!');
     }
-}
+};
+
+export const parseExercise = (target: number, dailyHours: number[]): inputValues => {
+  if (!isNaN(target) && dailyHours.every(hour => !isNaN(hour))) {
+      return {
+          target: target,
+          dailyHours: dailyHours,
+      };
+  } else {
+      throw new Error('Provided values were not numbers!');
+  }
+};
   
-const calculateExercises = (target: number, dailyHours: number[]): trainingValues => {
-    const periodlength = dailyHours.length + 1;
+export const calculateExercises = (target: number, dailyHours: number[]): trainingValues => {
+    const periodlength = dailyHours.length;
     const average = dailyHours.reduce((a, b) => a + b, 0) / periodlength;
-    const trainingdays = dailyHours.filter((hours) => hours > 0).length + 1;
+    const trainingdays = dailyHours.filter((hours) => hours > 0).length;
   
     const success = average >= target ? true : false;
   
@@ -42,7 +53,7 @@ const calculateExercises = (target: number, dailyHours: number[]): trainingValue
   
     if (average === target) {
       rating = 2;
-      description = 'Yay you met your target! Great job!'
+      description = 'Yay you met your target! Great job!';
     } else if (average > target) {
       rating = 3;
       description = 'Wow you exceeded your target! Excellnt job! Keep up the good work!';
@@ -59,15 +70,15 @@ const calculateExercises = (target: number, dailyHours: number[]): trainingValue
       ratingDescription: description,
       target: target,
       average: average
-    }
-}
+    };
+};
 
 try {
     const { target, dailyHours } = parseArguments(process.argv);
     const result = calculateExercises(target, dailyHours);
     console.log('Result:', result);
   } catch (error: unknown) {
-    let errorMessage = 'Something bad happened.'
+    let errorMessage = 'Something bad happened.';
     if (error instanceof Error) {
       errorMessage += ' Error: ' + error.message;
     }
