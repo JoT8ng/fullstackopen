@@ -3,7 +3,7 @@ interface Operation {
     weight: number;
   }
   
-  const parseArguments = (args: string[]): Operation => {
+const parseArgumentsOne = (args: string[]): Operation => {
     if (args.length < 4) throw new Error('Not enough arguments');
     if (args.length > 4) throw new Error('Too many arguments');
   
@@ -15,9 +15,9 @@ interface Operation {
     } else {
       throw new Error('Provided values were not numbers!');
     }
-  }
+}
   
-  const calculateBmi = (height: number, weight: number): string => {
+const calculateBmi = (height: number, weight: number): string => {
     const bmi = (weight / height / height) * 10000;
   
     if (bmi < 16) {
@@ -37,10 +37,10 @@ interface Operation {
     } else if (bmi >= 40) {
         return 'obese (class III)';
     }
-  }
+}
   
-  try {
-    const { height, weight } = parseArguments(process.argv);
+try {
+    const { height, weight } = parseArgumentsOne(process.argv);
     const result = calculateBmi(height, weight);
     console.log('BMI Result:', result);
   } catch (error: unknown) {
@@ -49,4 +49,4 @@ interface Operation {
       errorMessage += ' Error: ' + error.message;
     }
     console.log(errorMessage);
-  }
+}
