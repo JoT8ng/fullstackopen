@@ -3,7 +3,7 @@ interface trainingValues {
     trainingDays: number;
     success: boolean;
     rating: number;
-    ratingDescription: string;
+    ratingDescription: string | undefined;
     target: number;
     average: number;
 }

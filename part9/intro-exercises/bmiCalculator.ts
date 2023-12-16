@@ -37,6 +37,8 @@ const calculateBmi = (height: number, weight: number): string => {
     } else if (bmi >= 40) {
         return 'obese (class III)';
     }
+
+    return 'unknown BMI category';
 }
   
 try {
