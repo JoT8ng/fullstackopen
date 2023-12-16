@@ -16,8 +16,19 @@ const parseArgumentsOne = (args: string[]): Operation => {
       throw new Error('Provided values were not numbers!');
     }
 }
+
+export const parseArgumentsBmi = (height: number, weight: number): Operation => {
+  if (!isNaN(height) && !isNaN(weight)) {
+    return {
+      height: height,
+      weight: weight
+    }
+  } else {
+    throw new Error('Provided values were not numbers!');
+  }
+}
   
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
     const bmi = (weight / height / height) * 10000;
   
     if (bmi < 16) {
