@@ -18,8 +18,14 @@ export interface CoursePartBackground extends CoursePartBase {
     backgroundMaterial: string;
     kind: "background"
 }
+
+export interface CoursePartSpecial extends CoursePartBase {
+  description: string;
+  requirements: string[];
+  kind: "special"
+}
   
-export type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground;
+export type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground | CoursePartSpecial;
 
 export type selectBasic = Omit<CoursePartBasic, 'description'>;
 
@@ -56,5 +62,12 @@ export const courseParts: CoursePart[] = [
       exerciseCount: 10,
       description: "a hard part",
       kind: "basic",
+    },
+    {
+      name: "Backend development",
+      exerciseCount: 21,
+      description: "Typing the backend",
+      requirements: ["nodejs", "jest"],
+      kind: "special"
     },
 ];

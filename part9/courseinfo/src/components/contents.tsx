@@ -36,6 +36,16 @@ const Part = (props: CoursePart) => {
                     <p>Background Material: {props.backgroundMaterial}</p>
                 </div>
             )
+        case "special":
+            console.log(props.name, props.exerciseCount, props.description, props.requirements);
+            return (
+                <div>
+                    <h3>{props.name}</h3>
+                    <p>Exercise Count: {props.exerciseCount}</p>
+                    <p>Description: {props.description}</p>
+                    <p>Description: {props.requirements}</p>
+                </div>
+            )
         default:
             return assertNever(props);
     }
