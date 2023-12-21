@@ -1,37 +1,16 @@
-const App = () => {
-  const courseName = "Half Stack application development";
-  const courseParts = [
-    {
-      name: "Fundamentals",
-      exerciseCount: 10
-    },
-    {
-      name: "Using props to pass data",
-      exerciseCount: 7
-    },
-    {
-      name: "Deeper type usage",
-      exerciseCount: 14
-    }
-  ];
+import Content from "./components/contents";
+import Header from "./components/header";
+import Total from "./components/total";
+import { courseParts } from "./types";
 
-  const totalExercises = courseParts.reduce((sum, part) => sum + part.exerciseCount, 0);
+const App = () => {
+  const courseName: string = "Half Stack application development";
 
   return (
     <div>
-      <h1>{courseName}</h1>
-      <p>
-        {courseParts[0].name} {courseParts[0].exerciseCount}
-      </p>
-      <p>
-        {courseParts[1].name} {courseParts[1].exerciseCount}
-      </p>
-      <p>
-        {courseParts[2].name} {courseParts[2].exerciseCount}
-      </p>
-      <p>
-        Number of exercises {totalExercises}
-      </p>
+      <Header courseName={courseName} />
+      <Content courseParts={courseParts} />
+      <Total />
     </div>
   );
 };
