@@ -1,6 +1,12 @@
 import { useState } from "react"
+import axios, {AxiosError} from 'axios'
 import { DiaryEntry, Visibility, Weather } from "../types"
 import { createEntry } from "../services/diaryService"
+
+interface ValidationError {
+    message: string;
+    errors: Record<string, string[]>
+}
 
 const DiaryForm = () => {
     const [entry, setEntry] = useState<DiaryEntry[]>([]);
@@ -8,6 +14,14 @@ const DiaryForm = () => {
     const [weather, setWeather] = useState('');
     const [visibility, setVisibility] = useState('');
     const [comment, setComment] = useState('');
+    const [error, setError] = useState('');
+
+    const errorStyle = {
+        color: 'red',
+        fontSize: 20,
+        padding: 10,
+        marginBottom: 10,
+    }
 
     const entryCreation = (event: React.SyntheticEvent) => {
         event.preventDefault();
@@ -18,11 +32,22 @@ const DiaryForm = () => {
             comment: comment
         }).then(data => {
             setEntry(entry.concat(data))
-        })
+        }).catch((err: Error | AxiosError) => {
+            if (axios.isAxiosError<ValidationError, Record<string, unknown>>(err)) {
+                console.log(err.status)
+                console.error(err.response);
+                setError(`failed to add diary entry: ${err.response}`)
+            } else {
+                console.error(err);
+            }
+        });
     };
 
     return (
         <div>
+            <div>
+                {error && error !== null && <p style={errorStyle}>{error}</p>}
+            </div>
             <form onSubmit={entryCreation}>
                 <div>
                     <label>
