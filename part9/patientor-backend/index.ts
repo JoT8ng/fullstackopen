@@ -1,8 +1,10 @@
 import express from 'express';
+import cors from 'cors';
 import diagnoseRouter from './src/routes/diagnosesRoute';
 import patientRouter from './src/routes/patientsRoute';
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const PORT = 3000;
 
