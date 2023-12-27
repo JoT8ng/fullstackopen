@@ -5,10 +5,11 @@ import { NewPatientEntry, patientEntry, selectPatientEntry } from "../../types";
 import { v4 as uuidv4 } from 'uuid';
 
 const patients: selectPatientEntry[] = patientData.map(
-    ({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+    ({ id, name, dateOfBirth, ssn, gender, occupation, entries }) => ({
         id,
         name,
         dateOfBirth,
+        ssn,
         gender,
         occupation,
         entries
