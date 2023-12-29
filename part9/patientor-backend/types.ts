@@ -34,26 +34,32 @@ export interface HealthCheckEntry extends BaseEntry {
     healthCheckRating: HealthCheckRating;
 }
 
+export interface SickLeave {
+    startDate: string;
+    endDate: string;
+}
+
 export interface OccupationalHealthcareEntry extends BaseEntry {
     type: 'OccupationalHealthcare';
     employerName: string;
-    sickLeave?: {
-      startDate: string;
-      endDate: string;
-    };
+    sickLeave?: SickLeave;
+}
+
+export interface Discharge {
+    date: string;
+    criteria: string;
 }
   
 export interface HospitalEntry extends BaseEntry {
     type: 'Hospital';
-    discharge: {
-      date: string;
-      criteria: string;
-    };
+    discharge: Discharge;
 }
 
 export type selectPatientEntry = Omit<patientEntry, 'ssn' | 'entries'>;
 
 export type NewPatientEntry = Omit<patientEntry, 'id'>;
+
+export type NewBaseEntry = Omit<BaseEntry, 'id'>;
 
 export enum Gender {
     Male = 'male',
