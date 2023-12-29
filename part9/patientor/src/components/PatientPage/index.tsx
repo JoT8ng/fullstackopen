@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { Patient, Gender, Diagnosis } from "../../types";
+import { Patient, Gender, Diagnosis, Entry } from "../../types";
 import { useParams } from 'react-router-dom';
 import patientService from "../../services/patients";
 import diagnosisService from "../../services/diagnosis";
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import { Typography } from "@mui/material";
+import HealthCheck from "./HealthCheck";
+import Hospital from "./HospitalEntry";
+import OccuHealthcare from "./OccupationalHealthcare";
 
 const genderId = (gender: Gender | undefined ) => {
     switch(gender){
@@ -15,6 +18,25 @@ const genderId = (gender: Gender | undefined ) => {
             return <MaleIcon/>;
         default:
             return null;
+    }
+};
+
+const assertNever = (value: never): never => {
+    throw new Error(
+      `Unhandled discriminated union member: ${JSON.stringify(value)}`
+    );
+  };
+
+const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
+    switch(entry.type) {
+        case "Hospital":
+            return <Hospital entry={entry} />;
+        case "HealthCheck":
+            return <HealthCheck entry={entry} />;
+        case "OccupationalHealthcare":
+            return <OccuHealthcare entry={entry} />;
+        default:
+            return assertNever(entry);
     }
 };
 
@@ -60,6 +82,13 @@ const PatientPage = () => {
                                 );
                             })}
                         </ul>
+                        {patient.entries.map((entry, i) => (
+                            <div key={i}>
+                                {Object.keys(diagnoses).length === 0 ? null : (
+                                    <EntryDetails entry={entry} />
+                                )}
+                            </div>
+                        ))}
                     </div>
                 );
             })}
