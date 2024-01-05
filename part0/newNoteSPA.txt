@@ -1,0 +1,11 @@
+sequenceDiagram- spa app new note
+    participant browser
+    participant server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate server
+    server-->>browser: Response HTTP status code 201 Created and JSON response {"message":"note created"}
+    
+    Note right of browser: server runs spa.js and appends the new note to the list and automatically places GET request         
+    to re-render the page
+    deactivate server
