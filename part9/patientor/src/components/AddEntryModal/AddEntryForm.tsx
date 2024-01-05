@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, ChangeEvent } from "react";
 
 import {  TextField, InputLabel, MenuItem, Select, Grid, Button, SelectChangeEvent } from '@mui/material';
 
@@ -29,7 +29,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
     const [employerName, setEmployerName] = useState('');
     const [sickLeaveStart, setSickLeaveStart] = useState('');
     const [sickLeaveEnd, setSickLeaveEnd] = useState('');
-    const [entryOptions, setEntryOptions] = useState('');
+    const [entryOptions, setEntryOptions] = useState<'HealthCheck' | 'Hospital' | 'OccupationalHealthcare'>('HealthCheck');
   
     const onHealthCheckRatingChange = (event: SelectChangeEvent<string>) => {
         event.preventDefault();
@@ -46,7 +46,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
 
     };
 
-    const onDiagnosisCodesChange = (event: SelectChangeEvent<string[]>) => {
+    const onDiagnosisCodesChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
 
         const value = event.target.value;
@@ -100,10 +100,11 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
       <div>
         <h1>Add New Entry</h1>
         <label>Entry Type</label>
-        <select value={entryOptions} onChange={({ target }) => setEntryOptions(target.value)}>
-            <MenuItem key='HealthCheck' value='HealthCheck'>Health Check</MenuItem>
-            <MenuItem key='Hospital' value='Hospital'>Hospital Entry</MenuItem>
-            <MenuItem key='OccupationalHealthcare' value='OccupationalHealthcare'>Occupational Healthcare</MenuItem>
+        <select value={entryOptions} onChange={({ target }) => setEntryOptions(target.value as 'HealthCheck' | 'Hospital' | 'OccupationalHealthcare')}>
+            <option value=''>Select an entry type</option>
+            <option key='HealthCheck' value='HealthCheck'>Health Check</option>
+            <option key='Hospital' value='Hospital'>Hospital Entry</option>
+            <option key='OccupationalHealthcare' value='OccupationalHealthcare'>Occupational Healthcare</option>
         </select>
         <form onSubmit={addEntry}>
           <TextField
@@ -113,10 +114,8 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
             onChange={({ target }) => setDescription(target.value)}
           />
           <TextField
-            label="Date"
             fullWidth
             type="date"
-            value={date}
             onChange={({ target }) => setDate(target.value)}
           />
           <TextField
@@ -127,7 +126,6 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           />
           <TextField
             label="Diagnosis Codes"
-            multiple
             fullWidth
             value={diagnosisCodes}
             onChange={onDiagnosisCodesChange}
