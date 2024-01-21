@@ -11,13 +11,13 @@ Description from course page: An introduction to modern web application developm
 - [x] Part 4 Testing Express servers, user administration
 - [x] Part 5 Testing React apps
 - [x] Part 6 Advanced state management
-- [] Part 7 React router, custom hooks, styling app with CSS and webpack
-- [] Part 8 GraphQL
+- [ ] Part 7 React router, custom hooks, styling app with CSS and webpack
+- [ ] Part 8 GraphQL
 - [x] Part 9 TypeScript
-- [] Part 10 React Native
-- [] Part 11 CI/CD
-- [] Part 12 Containers
-- [] Part 13 Using relational databases (in progress)
+- [ ] Part 10 React Native
+- [ ] Part 11 CI/CD
+- [ ] Part 12 Containers
+- [ ] Part 13 Using relational databases (in progress)
 
 ## Highlights
 Full stack web applications:
@@ -28,7 +28,7 @@ HTML, CSS, and Javascript with React, Node.js, Express, and MongoDB
 * Patientor (part 9): Healthcare patient and diagnoses app built using Typescript. Allows users to log in and save, edit, and delete patient medical and diagnoses data.
 
 Express Backends with state management:
-React Query, Redux
+React Query, Redux.
 Refer to part 6
 * Anecdotes app
 * Unicafe app
