@@ -3,6 +3,8 @@ const config = require('../utils/config')
 const Blog = require('../models/models')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const sequelize = require('./index')
+const { Sequelize, QueryTypes } = require('sequelize')
 
 const getTokenFrom = request => {
   const authorization = request.get('authorization')
@@ -14,8 +16,35 @@ const getTokenFrom = request => {
 
 blogsRouter.get('/', async (request, response, next) => {
   try {
-    const blogs = await Blog
-      .find({}).populate('user', { username: 1, name: 1 })
+    const where = {}
+
+    if (request.query.search) {
+      where[Op.or] = [
+        {
+          title: {
+            [Op.substring]: request.query.search
+          }
+        },
+        {
+          author: {
+            [Op.substring]: request.query.search
+          }
+        },
+      ]
+    }
+
+    const blogs = await Blog.findAll({
+      attributes: { exclude: ['userId'] },
+      include: {
+        model: User,
+        attributes: ['name']
+      },
+      where,
+      order: [
+        ['likes', 'DESC']
+      ]
+    })
+    console.log(JSON.stringify(blogs, null))
     response.json(blogs)
   } catch (exception) {
     next(exception)
@@ -23,22 +52,22 @@ blogsRouter.get('/', async (request, response, next) => {
 })
 
 blogsRouter.delete('/:id', async (request, response, next) => {
-  const blogToDelete = await Blog.findById(request.params.id)
+  const blogToDelete = await Blog.findByPk(request.params.id)
 
   const decodedToken = jwt.verify(getTokenFrom(request), config.SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findByPk(decodedToken.id)
 
-  if (blogToDelete.user.toString() !== user._id.toString()) {
+  if (blogToDelete.userId.toString() !== user.id.toString()) {
     return response.status(401).json({
       error: 'only users who wrote blog entry can delete entry'
     })
   }
   
   try {
-    await Blog.findByIdAndRemove(request.params.id)
+    await blogToDelete.destroy()
     response.status(204).end()
   } catch (exception) {
     next(exception)
@@ -62,18 +91,14 @@ blogsRouter.post('/', async (request, response, next) => {
     body.likes = 0
   }
 
-  const blog = new Blog({
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes,
-    user: user._id
-  })
-
   try {
-    const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog._id)
-    await user.save()
+    const savedBlog = await Blog.create({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+      userId: user.id
+    })
     response.status(201).json(savedBlog)
   } catch (exception) {
     next(exception)
@@ -84,14 +109,17 @@ blogsRouter.put('/:id', async (request, response, next) => {
   try {
     const body = request.body
 
-    const blog = {
+    const updatedBlog = {
       title: body.title,
       author: body.author,
       url: body.url,
       likes: body.likes
     }
-    
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+    await Blog.update(updatedBlog, {
+      where: {
+        id: blog.id
+      }
+    }),
     response.status(200).json(updatedBlog)
   } catch (exception) {
     next(exception)

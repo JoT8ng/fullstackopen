@@ -3,8 +3,12 @@ const usersRouter = require('express').Router()
 const User = require('../models/user')
 
 usersRouter.get('/', async (request, response) => {
-  const users = await User
-    .find({}).populate('blogs', { title: 1, author: 1, url: 1 })
+  const users = await User.findAll({
+    include: {
+      model: Note,
+      attributes: { exclude: ['userId'] }
+    }
+  })
   response.json(users)
 })
 
@@ -23,7 +27,11 @@ usersRouter.post('/', async (request, response) => {
     })
   }
 
-  const existingUser = await User.findOne({ username })
+  const existingUser = await User.findOne({
+    where: {
+      username: body.username
+    }
+  })
   if (existingUser) {
     return response.status(400).json({
       error: 'username must be unique'
@@ -33,15 +41,35 @@ usersRouter.post('/', async (request, response) => {
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
 
-  const user = new User({
+  const user = new User.create({
     username,
     name,
     passwordHash,
   })
 
-  const savedUser = await user.save()
-
   response.status(201).json(savedUser)
+})
+
+usersRouter.get('/:id', async (req, res) => {
+  const user = await User.findByPk(req.params.id)
+  if (user) {
+    res.json(user)
+  } else {
+    res.status(404).end()
+  }
+})
+
+usersRouter.put('/:username', async (req, res) => {
+  const updatedUser = await User.findOne({ where: { username: req.params.username }})
+
+  if (updatedUser) {
+  try {
+    await updatedUser.save()
+    response.status(200).json(updatedUser)
+  } catch (exception) {
+    next(exception)
+  }
+  }
 })
 
 module.exports = usersRouter
