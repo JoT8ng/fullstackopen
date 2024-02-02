@@ -41,14 +41,30 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const tokenValidator = async (request, response, next) => {
-  const decodedToken = jwt.verify(getTokenFrom(request), config.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  const token = getTokenFrom(request)
 
-  request.user = user
-  next()
+  try {
+    const decodedToken = jwt.verify(token, config.SECRET)
+
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+    if (!user || user.disabled) {
+      return response.status(401).json({ error: 'user disabled' })
+    }
+
+    const session = await Session.findOne({ user_id: user.id, token })
+    if (!session) {
+      return response.status(401).json({ error: 'session not found' })
+    }
+
+    request.user = user
+    next()
+  } catch (exception) {
+    next(exception)
+  }
 }
 
 module.exports = {

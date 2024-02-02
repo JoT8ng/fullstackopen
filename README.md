@@ -15,9 +15,9 @@ Description from course page: An introduction to modern web application developm
 - [ ] Part 8 GraphQL
 - [x] Part 9 TypeScript
 - [ ] Part 10 React Native
-- [ ] Part 11 CI/CD
+- [ ] Part 11 CI/CD (in progress)
 - [ ] Part 12 Containers
-- [ ] Part 13 Using relational databases (in progress)
+- [x] Part 13 Using relational databases
 
 ## Highlights
 Full stack web applications:

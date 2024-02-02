@@ -3,8 +3,6 @@ const config = require('../utils/config')
 const Blog = require('../models/models')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-const sequelize = require('./index')
-const { Sequelize, QueryTypes } = require('sequelize')
 
 const getTokenFrom = request => {
   const authorization = request.get('authorization')

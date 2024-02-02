@@ -5,11 +5,15 @@ const User = require('../models/user')
 usersRouter.get('/', async (request, response) => {
   const users = await User.findAll({
     include: {
-      model: Note,
+      model: Blog,
       attributes: { exclude: ['userId'] }
     }
   })
-  response.json(users)
+  if (user) {
+    response.json(users)
+  } else {
+    response.status(404).end()
+  }
 })
 
 usersRouter.post('/', async (request, response) => {
@@ -51,11 +55,38 @@ usersRouter.post('/', async (request, response) => {
 })
 
 usersRouter.get('/:id', async (req, res) => {
-  const user = await User.findByPk(req.params.id)
-  if (user) {
-    res.json(user)
-  } else {
-    res.status(404).end()
+  const { read } = req.query
+
+  const where = {}
+
+  if (read !== undefined) {
+    where.read = read === 'true'
+  }
+
+  try {
+    const user = await User.findByPk(req.params.id, {
+      include: {
+        model: Blog,
+        as: 'readings',
+          attributes: {
+            exclude: ['userId'],
+            include: ['year'],
+          },
+          through: {
+            as: 'readinglists',
+            attributes: ['read', 'id'],
+            where: where,
+          },
+        attributes: { exclude: ['userId', 'disabled', 'admin'] }
+      }
+    })
+    if (user) {
+      res.json(user)
+    } else {
+      res.status(404).end()
+    }
+  } catch (exception) {
+    next(exception)
   }
 })
 

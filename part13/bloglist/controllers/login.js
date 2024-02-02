@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const config = require('../utils/config')
 const User = require('../models/user')
+const Session = require('../models/session')
 
 loginRouter.post('/', async (request, response) => {
   const body = request.body
@@ -39,6 +40,8 @@ loginRouter.post('/', async (request, response) => {
     config.SECRET,
     { expiresIn: 60*60 }
   )
+  
+  await Session.create({ token: token, user_id: user.id })
 
   response
     .status(200)
