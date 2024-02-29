@@ -16,7 +16,7 @@ Description from course page: An introduction to modern web application developm
 - [x] Part 9 TypeScript
 - [ ] Part 10 React Native
 - [x] Part 11 CI/CD
-- [ ] Part 12 Containers (in progress)
+- [x] Part 12 Containers (in progress)
 - [x] Part 13 Using relational databases
 
 ## Highlights
